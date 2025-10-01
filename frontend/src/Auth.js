@@ -16,12 +16,14 @@ const Auth = () => {
   const [password, setPassword] = useState('');
   const [tab, setTab] = useState(0);
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const { login, register } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(''); // Clear previous errors
+    setIsLoading(true);
     try {
       if (tab === 0) {
         await login(email, password);
@@ -34,6 +36,8 @@ const Auth = () => {
     } catch (err) {
       console.error('Authentication failed:', err);
       setError(err.response?.data?.detail || 'An unexpected error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -86,8 +90,9 @@ const Auth = () => {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            disabled={isLoading}
           >
-            {tab === 0 ? 'Sign In' : 'Sign Up'}
+            {isLoading ? 'Processing...' : (tab === 0 ? 'Sign In' : 'Sign Up')}
           </Button>
         </Box>
       </Box>

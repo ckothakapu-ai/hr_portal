@@ -23,7 +23,7 @@ async def login_for_access_token(db: Session = Depends(auth.get_db), form_data: 
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-@router.post("/users/", response_model=schemas.UserCreate)
+@router.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(auth.get_db)):
     db_user = auth.get_user(db, email=user.email)
     if db_user:
@@ -33,7 +33,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(auth.get_db)):
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
-    return user
+    return db_user
 
 @router.get("/users/me", response_model=schemas.User)
 async def read_users_me(current_user: models.User = Depends(auth.get_current_user)):
