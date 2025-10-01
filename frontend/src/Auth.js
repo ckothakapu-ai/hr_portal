@@ -15,11 +15,13 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [tab, setTab] = useState(0);
+  const [error, setError] = useState('');
   const { login, register } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(''); // Clear previous errors
     try {
       if (tab === 0) {
         await login(email, password);
@@ -29,8 +31,9 @@ const Auth = () => {
         await login(email, password);
       }
       navigate('/');
-    } catch (error) {
-      console.error('Authentication failed:', error);
+    } catch (err) {
+      console.error('Authentication failed:', err);
+      setError(err.response?.data?.detail || 'An unexpected error occurred. Please try again.');
     }
   };
 
@@ -73,6 +76,11 @@ const Auth = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
+          {error && (
+            <Typography color="error" sx={{ mt: 2 }}>
+              {error}
+            </Typography>
+          )}
           <Button
             type="submit"
             fullWidth
